@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.latewind.dao.stock.StockDayInfoMapper">
+	<resultMap id="BaseResultMap" type="com.latewind.entity.stock.StockDayInfo">
+		<id column="stock_id" property="stockId" jdbcType="INTEGER" />
+		<result column="stock_code" property="stockCode" jdbcType="VARCHAR" />
+		<result column="stock_name" property="stockName" jdbcType="VARCHAR" />
+		<result column="trade_time" property="tradeTime" jdbcType="DATE" />
+		<result column="open_price" property="openPrice" jdbcType="DECIMAL" />
+		<result column="high_price" property="highPrice" jdbcType="DECIMAL" />
+		<result column="low_price" property="lowPrice" jdbcType="DECIMAL" />
+		<result column="close_price" property="closePrice" jdbcType="DECIMAL" />
+		<result column="adj_close_price" property="adjClosePrice"
+			jdbcType="DECIMAL" />
+		<result column="volume" property="volume" jdbcType="DECIMAL" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		stock_id, stock_code, stock_name, trade_time, open_price,
+		high_price,
+		low_price,
+		close_price, adj_close_price, volume
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from stock_day_t
+		where stock_id = #{stockId,jdbcType=INTEGER}
+	</select>
+
+	<select id="selectByStockQueryTerms" resultMap="BaseResultMap"
+		parameterType="com.latewind.query.StockQueryTerms">
+		select
+		<include refid="Base_Column_List" />
+		from stock_day_t
+		where stock_code = #{queryTerms.stockCode}
+		<if test="queryTerms.startTime!=null and queryTerms.startTime!=null">
+		and trade_time between #{queryTerms.startTime,jdbcType=DATE} and #{queryTerms.endTime,jdbcType=DATE}
+		</if>
+		order by trade_time asc
+		
+	</select>
+
+
+	<select id="selectByStockCode" resultMap="BaseResultMap">
+		select
+		t1.stock_code ,
+		t2.stock_name,
+		t1.trade_time,
+		t1.open_price,
+		t1.high_price,
+		t1.low_price,
+		t1.close_price,
+		t1.adj_close_price,
+		t1.volume volume
+		from
+		stock_day_t t1
+		inner join stock_code_name_t t2
+		on
+		t1.stock_code =#{stockCode}
+		and
+		t2.stock_code= #{stockCode}
+		order by t1.trade_time desc
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from
+		stock_day_t
+		where stock_id = #{stockId,jdbcType=INTEGER}
+	</delete>
+
+
+
+
+	<insert id="insert" parameterType="com.latewind.entity.stock.StockDayInfo">
+		insert into stock_day_t
+		(stock_id, stock_code, stock_name,
+		trade_time, open_price, high_price,
+		low_price, close_price, adj_close_price,
+		volume)
+		values
+		(#{stockId,jdbcType=INTEGER}, #{stockCode,jdbcType=VARCHAR},
+		#{stockName,jdbcType=VARCHAR},
+		#{tradeTime,jdbcType=DATE},
+		#{openPrice,jdbcType=DECIMAL}, #{highPrice,jdbcType=DECIMAL},
+		#{lowPrice,jdbcType=DECIMAL}, #{closePrice,jdbcType=DECIMAL},
+		#{adjClosePrice,jdbcType=DECIMAL},
+		#{volume,jdbcType=DECIMAL})
+	</insert>
+	<insert id="insertBatch">
+		insert into stock_day_t (stock_code, stock_name,
+		trade_time,
+		open_price, high_price,
+		low_price, close_price, adj_close_price,
+		volume)
+
+		values
+		<foreach collection="list" item="item" open="" separator=","
+			close="">
+			(#{item.stockCode,jdbcType=VARCHAR},
+			#{item.stockName,jdbcType=VARCHAR},
+			#{item.tradeTime,jdbcType=DATE},
+			#{item.openPrice,jdbcType=DECIMAL},
+			#{item.highPrice,jdbcType=DECIMAL},
+			#{item.lowPrice,jdbcType=DECIMAL},
+			#{item.closePrice,jdbcType=DECIMAL},
+			#{item.adjClosePrice,jdbcType=DECIMAL},
+			#{item.volume,jdbcType=DECIMAL})
+		</foreach>
+
+	</insert>
+	<insert id="insertSelective" parameterType="com.latewind.entity.stock.StockDayInfo">
+		insert into stock_day_t
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="stockId != null">
+				stock_id,
+			</if>
+			<if test="stockCode != null">
+				stock_code,
+			</if>
+			<if test="stockName != null">
+				stock_name,
+			</if>
+			<if test="tradeTime != null">
+				trade_time,
+			</if>
+			<if test="openPrice != null">
+				open_price,
+			</if>
+			<if test="highPrice != null">
+				high_price,
+			</if>
+			<if test="lowPrice != null">
+				low_price,
+			</if>
+			<if test="closePrice != null">
+				close_price,
+			</if>
+			<if test="adjClosePrice != null">
+				adj_close_price,
+			</if>
+			<if test="volume != null">
+				volume,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="stockId != null">
+				#{stockId,jdbcType=INTEGER},
+			</if>
+			<if test="stockCode != null">
+				#{stockCode,jdbcType=VARCHAR},
+			</if>
+			<if test="stockName != null">
+				#{stockName,jdbcType=VARCHAR},
+			</if>
+			<if test="tradeTime != null">
+				#{tradeTime,jdbcType=DATE},
+			</if>
+			<if test="openPrice != null">
+				#{openPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="highPrice != null">
+				#{highPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="lowPrice != null">
+				#{lowPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="closePrice != null">
+				#{closePrice,jdbcType=DECIMAL},
+			</if>
+			<if test="adjClosePrice != null">
+				#{adjClosePrice,jdbcType=DECIMAL},
+			</if>
+			<if test="volume != null">
+				#{volume,jdbcType=DECIMAL},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.latewind.entity.stock.StockDayInfo">
+		update stock_day_t
+		<set>
+			<if test="stockCode != null">
+				stock_code = #{stockCode,jdbcType=VARCHAR},
+			</if>
+			<if test="stockName != null">
+				stock_name = #{stockName,jdbcType=VARCHAR},
+			</if>
+			<if test="tradeTime != null">
+				trade_time = #{tradeTime,jdbcType=DATE},
+			</if>
+			<if test="openPrice != null">
+				open_price = #{openPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="highPrice != null">
+				high_price = #{highPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="lowPrice != null">
+				low_price = #{lowPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="closePrice != null">
+				close_price = #{closePrice,jdbcType=DECIMAL},
+			</if>
+			<if test="adjClosePrice != null">
+				adj_close_price = #{adjClosePrice,jdbcType=DECIMAL},
+			</if>
+			<if test="volume != null">
+				volume = #{volume,jdbcType=DECIMAL},
+			</if>
+		</set>
+		where stock_id = #{stockId,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.latewind.entity.stock.StockDayInfo">
+		update stock_day_t
+		set stock_code = #{stockCode,jdbcType=VARCHAR},
+		stock_name =
+		#{stockName,jdbcType=VARCHAR},
+		trade_time = #{tradeTime,jdbcType=DATE},
+		open_price = #{openPrice,jdbcType=DECIMAL},
+		high_price =
+		#{highPrice,jdbcType=DECIMAL},
+		low_price =
+		#{lowPrice,jdbcType=DECIMAL},
+		close_price =
+		#{closePrice,jdbcType=DECIMAL},
+		adj_close_price =
+		#{adjClosePrice,jdbcType=DECIMAL},
+		volume = #{volume,jdbcType=DECIMAL}
+		where stock_id = #{stockId,jdbcType=INTEGER}
+	</update>
+</mapper>

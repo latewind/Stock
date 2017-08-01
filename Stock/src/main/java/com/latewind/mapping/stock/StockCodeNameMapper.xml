@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.latewind.dao.stock.StockCodeNameMapper" >
+  <resultMap id="BaseResultMap" type="com.latewind.entity.stock.StockCodeName" >
+    <id column="stock_code" property="stockCode" jdbcType="VARCHAR" />
+    <result column="stock_name" property="stockName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    stock_code, stock_name
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from stock_code_name_t
+    where stock_code = #{stockCode,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectAllCodeName" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from stock_code_name_t
+  </select>
+  
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from stock_code_name_t
+    where stock_code = #{stockCode,jdbcType=VARCHAR}
+  </delete>
+  
+   
+   <insert id="insertStockCodeName" parameterType="java.util.Map">
+    insert into stock_code_name_t (stock_code,stock_name) values
+    <foreach collection="map" item="value"  index="key" open="" separator="," close="">
+    ('${key}',#{value})
+    </foreach>
+ </insert>
+  
+  
+  <insert id="insert" parameterType="com.latewind.entity.stock.StockCodeName" >
+    insert into stock_code_name_t (stock_code, stock_name)
+    values (#{stockCode,jdbcType=VARCHAR}, #{stockName,jdbcType=VARCHAR})
+  </insert>
+  
+  
+  
+  <insert id="insertSelective" parameterType="com.latewind.entity.stock.StockCodeName" >
+    insert into stock_code_name_t
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="stockCode != null" >
+        stock_code,
+      </if>
+      <if test="stockName != null" >
+        stock_name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="stockCode != null" >
+        #{stockCode,jdbcType=VARCHAR},
+      </if>
+      <if test="stockName != null" >
+        #{stockName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.latewind.entity.stock.StockCodeName" >
+    update stock_code_name_t
+    <set >
+      <if test="stockName != null" >
+        stock_name = #{stockName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where stock_code = #{stockCode,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.latewind.entity.stock.StockCodeName" >
+    update stock_code_name_t
+    set stock_name = #{stockName,jdbcType=VARCHAR}
+    where stock_code = #{stockCode,jdbcType=VARCHAR}
+  </update>
+</mapper>
